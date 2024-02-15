@@ -40,10 +40,10 @@ class CustomSignUpSerializer(serializers.Serializer):
 #         model = User
 
 
-from .models import  Machines, Place
+# from .models import  Machines, Place
 
-class PlaceSerializer (serializers.ModelSerializer):
-    class Meta:
-        model=Place
-        fields="__all__"
+# class PlaceSerializer (serializers.ModelSerializer):
+#     class Meta:
+#         model=Place
+#         fields="__all__"
 

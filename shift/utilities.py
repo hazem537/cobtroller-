@@ -1,8 +1,9 @@
+   
 import re
 from tracemalloc import start
 from shift.models import Shift, ShiftDetail
 from django.utils import timezone
-from acces.models import Machines
+from gates.models import Gate
 
 
 def get_client_ip(request):
@@ -10,34 +11,45 @@ def get_client_ip(request):
     if x_forwarded_for:
         ip = x_forwarded_for.split(",")[0]
     else:
-        ip = request.META.get("REMOTE_ADDR")
+        ip = request.META.get("REMOTE_ADDR")        
     return ip
 
 
 def machine_with_ip(ip):
     try:
-
-        actual_machine = Machines.objects.get(ip=ip)
+        print(ip)
+        actual_machine = Gate.objects.get(pc_ip=ip)
         return actual_machine
     except Exception as e:
+        for gate in Gate.objects.all():
+            print(gate.pc_ip)
         print(e)
-        return None
-
-# get active shift by time
-def active_shift(request):
-    detail_shifts = ShiftDetail.objects.filter(
-        mainShift__start__lte=timezone.now(), mainShift__end__gte=timezone.now()
-    )
-    machine = machine_with_ip(get_client_ip(request))
-    if not machine:
-        return None
-    # print(machine)
-    shift = detail_shifts.filter(machine=machine).first()
+        raise Exception("this device not in the shift")
     
+    
+def  get_active_mainshift ():
+    selected_shift = Shift.objects.filter(start__lte=timezone.now(),end__gte=timezone.now())
+    if(selected_shift.exists()):
+            return selected_shift.first()
+    else:
+        raise  Exception("call admin create new Shift ")
+# get active shift by time
+
+def active_shift_ip(ip):
+    
+    detail_shifts = get_active_mainshift().detail
+    machine =machine_with_ip(ip)
+    shift = detail_shifts.get(machine=machine)
     if shift :
-        
+        # print(shift)
         if shift.started == False and shift.ended == False:
-            return prev_shift(shift)
+            p_shift =prev_shift(shift)
+            if  p_shift is None:
+                shift.started=True
+                shift.save()
+                return shift
+            else:
+                return p_shift
             # gret pervious
             
         elif shift.started == True and shift.ended == False:
@@ -46,7 +58,54 @@ def active_shift(request):
         
         elif shift.started == True and shift.ended == True:
             #  get next shift 
-            return next_shift(shift)
+            n_shift = next_shift(shift) 
+            if n_shift is None:
+                shift.ended= False
+                shift.save()
+                return shift 
+            else: 
+                return n_shift
+
+    else:
+        return None  
+    
+        
+
+def active_shift(request):
+
+    detail_shifts = get_active_mainshift().detail
+
+    machine = machine_with_ip(get_client_ip(request))
+   
+    shift = detail_shifts.get(machine=machine)
+
+    
+    if shift :
+        print(shift)
+        if shift.started == False and shift.ended == False:
+            p_shift =prev_shift(shift)
+            if  p_shift is None:
+                shift.started=True
+                shift.save()
+                return shift
+            else:
+                return p_shift
+            # gret pervious
+            
+        elif shift.started == True and shift.ended == False:
+            # this is active shift
+            return shift
+        
+        elif shift.started == True and shift.ended == True:
+            #  get next shift 
+            n_shift = next_shift(shift) 
+            if n_shift is None:
+                shift.ended= False
+                shift.save()
+                return shift 
+            else: 
+                return n_shift
+
     else:
         return None  
     
@@ -58,26 +117,26 @@ def next_shift(shift: ShiftDetail):
         n_shift = ShiftDetail.objects.filter(
             mainShift__start__exact=shift.mainShift.end, machine=shift.machine
         ).first()
-        print(n_shift)
+       
     except Exception as e:
         print(e)
         return None
         
-    if(n_shift.ended == True):
+    if(n_shift.ended == True ):
         return next_shift(n_shift)
     else:
         return n_shift    
 
 def prev_shift(shift:ShiftDetail):
     try:
-        p_shift  =ShiftDetail.objects.filter(
-            maniShift__end__exact=shift.mainShift.start,machine=shift.machine
-        ).first()
+        p_shift  =ShiftDetail.objects.get(
+            mainShift__end__exact=shift.mainShift.start,machine=shift.machine
+        )
     except Exception as e:
         print(e)    
         return None
-    
-    if p_shift.started == False:
+  
+    if p_shift.started  and p_shift.started  == False:
         return prev_shift(p_shift)
     else:
         return p_shift    

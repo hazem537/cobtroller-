@@ -40,6 +40,7 @@ class ShiftCView (generics.CreateAPIView):
 #     queryset = Shift.objects.filter(start__lte =timezone.now(),end__gte=timezone.now())
 #     serializer_class =ShiftRetreiveSerializer
 #     permission_classes=[IsAuthenticated]
+from shift.utilities import  active_shift
 @permission_classes([IsAdminUser])
 @api_view(['GET'])
 def get_active_shift (request):
@@ -47,7 +48,7 @@ def get_active_shift (request):
     queryset = Shift.objects.filter(start__lte =timezone.now(),end__gte=timezone.now())
     
        
-    print (queryset)
+    # print (queryset)
     if(queryset.exists()):
         shift_serializer =ShiftRetreiveSerializer(instance=queryset,many=True)
         return Response({"data":shift_serializer.data},status=status.HTTP_200_OK)
@@ -87,11 +88,16 @@ class ShiftDetailUView(generics.UpdateAPIView):
 
     def partial_update(self,request, *args, **kwargs):
         try:
+            
+            # print(request.data) 
             return super().partial_update(request, *args, **kwargs)   
         except IntegrityError  as e:
             print(str(e))
             return Response({"error":"this user already exist in this shift "},status=status.HTTP_400_BAD_REQUEST)
-
+        except Exception as e :
+            print(str(e))
+            return Response({"error":"this user already exist in this shift "},status=status.HTTP_400_BAD_REQUEST)
+            
 
 
 

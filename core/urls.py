@@ -35,6 +35,10 @@ urlpatterns = [
     path('',include("shift.urls")),
     path('',include('acces.urls')),
     path('',include('cash.urls')),
+    path('',include('card.urls')),
+    path('',include('gates.urls')),
+    
+    
     
   path('docs/', schema_view.with_ui('swagger', cache_timeout=0),name='schema-swagger-ui'),
 ]

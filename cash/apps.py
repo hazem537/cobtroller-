@@ -6,4 +6,5 @@ class CashConfig(AppConfig):
     name = 'cash'
 
     def ready(self):
-        import cash.signals.cashdetail 
+        # import cash.signals.cashdetail
+        pass 

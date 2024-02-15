@@ -12,7 +12,7 @@ from shift.utilities import active_shift
 @permission_classes([IsAuthenticated])
 @api_view(["GET"])
 def get_cash_for_shift(request):
-    # activeshift=Shift.objects.get(start__lte=timezone.now(),end__gte=timezone.now())
+    
     shift = active_shift(request)
     cash=shift.cash
     cash_serializer = CashSerializer(cash)
