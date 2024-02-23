@@ -25,7 +25,7 @@ class MoneyTransaction(models.Model):
     date= models.DateTimeField( auto_now=False, auto_now_add=True)
     done= models.BooleanField(default =False)
 
-    shift =models.ForeignKey("shift.ShiftDetail",related_name="transaction", on_delete=models.CASCADE)
+    shift =models.ForeignKey("shift.ShiftDetail",related_name="transaction", on_delete=models.CASCADE,null=True)
     
     def __str__(self) -> str:
         return f"{self.sender} --> {self.receiver}-- {self.amount}"

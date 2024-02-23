@@ -108,7 +108,8 @@ class ShiftDetail(models.Model):
     
     
     def car_in (self):
-        return   self.session_in.exclude(lost_card=True).count()
+   
+        return   self.session_in.all().count()
     
     def car_out (self):
         return   self.session_out.count()
@@ -189,24 +190,24 @@ def after_create_detail_add_cash(sender,instance,created,  **kwargs):
         return new_cash  
 
 
-@receiver(post_save,sender=ShiftDetail)
-def startprocess(sender,instance:ShiftDetail,created,**kwargs):
-    if created:
-        pass
-    else:
-        from shift.processing import PM
-        if instance.started== True and instance.ended == False:
-            shift_process =PM.get_shift_process(instance.pk) 
-            if shift_process is None:    
-               PM.add_shift_process(instance.pk,instance.machine.ip,instance.machine.id) 
-            PM.start_shift_process(instance.pk)  
+# @receiver(post_save,sender=ShiftDetail)
+# def startprocess(sender,instance:ShiftDetail,created,**kwargs):
+#     if created:
+#         pass
+#     else:
+#         from shift.processing import PM
+#         if instance.started== True and instance.ended == False:
+#             shift_process =PM.get_shift_process(instance.pk) 
+#             if shift_process is None:    
+#                PM.add_shift_process(instance.pk,instance.machine.ip,instance.machine.id) 
+#             PM.start_shift_process(instance.pk)  
             
-            #  add process for each detail
-        if instance.ended==True:
-            shift_process=PM.get_shift_process(instance.pk)
-            if shift_process is not None:
-                print("Process end ")
-                PM.close_shift_process(instance.pk)
+#             #  add process for each detail
+#         if instance.ended==True:
+#             shift_process=PM.get_shift_process(instance.pk)
+#             if shift_process is not None:
+#                 print("Process end ")
+#                 PM.close_shift_process(instance.pk)
         
     
     

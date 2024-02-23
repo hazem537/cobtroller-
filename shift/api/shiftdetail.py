@@ -51,3 +51,31 @@ def getShiftData(request):
     except Exception as e:
         print(e)
         return Response({"message":str(e)},status=status.HTTP_400_BAD_REQUEST)
+
+
+
+        
+
+# @api_view(["GET"])
+# def get_active_processes(request):
+#         from shift.processing import ShiftProcessManager
+#         from django.core.cache import cache
+#         # process =cache.get("process")
+#         # print(process)
+#         # for pr in process :
+#         #     print(pr)
+#         pm =ShiftProcessManager()
+#         print(pm.processes)
+#         return Response({"message":"test"},status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+def getShiftdetailUser(request):
+    try:    
+        shift = active_shift(request)
+        serializer = shiftdetail.ShiftDetailUsernameSerializer(instance=shift)
+        return  Response(serializer.data,status=status.HTTP_200_OK)
+    except Exception as e:
+        print(e)
+        return Response({"message":str(e)},status=status.HTTP_400_BAD_REQUEST)
+

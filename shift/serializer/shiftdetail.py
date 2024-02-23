@@ -30,7 +30,8 @@ class ShiftDetailRetrive(serializers.ModelSerializer):
 #     cash = CashSerializer()
 #     class Meta:
 #         model=ShiftDetail
-#         fields="__all__"        
+#         fields="__all__"      
+# import gate.serializer import GateSerializer  
 class ShiftDetailDataSerializer(serializers.ModelSerializer):
     car_in =serializers.SerializerMethodField()
     car_in_detail =serializers.SerializerMethodField()
@@ -39,7 +40,7 @@ class ShiftDetailDataSerializer(serializers.ModelSerializer):
     cash =serializers.StringRelatedField(source="cash.amount")
     user=serializers.StringRelatedField(many=True)
     machine=serializers.StringRelatedField(source="machine.name")
-    
+    # machine_info = GateSerializer()
     class Meta:
         model= ShiftDetail
         fields=["car_in","car_out","car_in_detail","car_out_detail","cash","user","machine"]
@@ -56,4 +57,8 @@ class ShiftDetailDataSerializer(serializers.ModelSerializer):
     def get_car_out_detail(self,obj):
         return obj.car_out_detail()    
     
-    
+class ShiftDetailUsernameSerializer(serializers.ModelSerializer):
+    user =UserSerializer(many=True)
+    class Meta:
+        model = ShiftDetail
+        fields = ["user"]

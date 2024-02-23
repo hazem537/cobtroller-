@@ -16,6 +16,11 @@ path("shift-detail/<int:pk>",ShiftDetailUView.as_view()),
 path("end-shift/",shiftdetail.post_end_shift),
 path("shift-info/",shiftdetail.getShiftData),
 
+path("shift-detail-user/",shiftdetail.getShiftdetailUser)
+,
 path("main-shift-info/",shift.getShiftInfo)
+,
+path("main-shift/",shift.MainShiftList.as_view())
+,
 
 ]

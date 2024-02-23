@@ -1,34 +1,38 @@
-from c3 import C3,controldevice
+# import cv2
 
+# stream_url = "rtsp://@192.168.1.103:554/user=_password=_channel=1_stream=0.sdp"
+# cap = cv2.VideoCapture(stream_url)
 
-class Gate :
-    def __init__(self,ip) :
-        self.panel = C3(ip)
-        self.test = self.panel.connect()
+# # Check if the camera is opened successfully
+# if not cap.isOpened():
+#     print("Error: Could not open camera.")
+#     exit()
 
-    def test_machine (self):
-        return self.panel.connect()
+# # Wait for the stream to initialize
+# while True:
+#     ret, frame = cap.read()
+#     print(ret)
+#     if ret:
+#         break
 
-    def connect(self):
-        if  not self.test:
-            self.test= self.panel.connect()
-        return self.test
-    
-    def disconnect(self):
-        self.panel.disconnect()
-        
-            
-    def get_rtlog(self):
-        pass
-    
-    def open_in(self):
-        pass
-    
-    def open_out(self):
-        pass
-    
-    def close_in(self):
-        pass
-    
-    def close_out(self):
-        pass
+# # Show the frame
+# cv2.imshow( "mat",frame)
+
+# # Save the frame as an image
+# cv2.imwrite('snapshot.jpg', frame)
+
+# # Release the camera
+# cap.release()
+
+# # Close OpenCV windows
+# cv2.destroyAllWindows()
+
+import cv2
+ip ="rtsp://@192.168.1.103:554/user=_password=_channel=1_stream=0.sdp"
+cap = cv2.VideoCapture(ip)
+ret, frame = cap.read()
+if ret:
+    # Save the frame as a temporary image file
+    cv2.imwrite('temp_image.jpg', frame)
+    # Close the capture
+    cap.release()

@@ -66,7 +66,7 @@ class ParkingCard(models.Model):
         if self.category is None:
             obj_cat, created = Category.objects.get_or_create(
                 name="زائر",
-                defaults={"intial_duration": timedelta(hours=3), "intial_price": 5},
+                defaults={"intial_duration": timedelta(hours=1), "intial_price": 5},
             )
             if created:
                 obj_cat.save()
@@ -190,12 +190,13 @@ class ParkingSession(models.Model):
             id=self.pk
         )
         if s_trans:
-            raise ValueError("this card is alrady in ")
+            if not  self.lost_card:
+                raise ValueError("this card is alrady in ")
 
         if self.lost_card:
             card_lost_cat, created = Category.objects.get_or_create(
                 name="lost card",
-                defaults={"intial_duration": timedelta(hours=1), "intial_price": 5},
+                defaults={"intial_duration": timedelta(hours=1), "intial_price": 6.25},
             )
             self.category = card_lost_cat
 

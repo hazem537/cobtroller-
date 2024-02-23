@@ -18,6 +18,9 @@ def time_it_stay(request):
     print(hours ,minutes )
     return Response("hello")
  
+ 
+ 
+ 
 @api_view(["GET"])
 def get_data_in (request):
     print(request.data)

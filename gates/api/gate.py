@@ -36,3 +36,22 @@ def test_connect(request,pk):
         return Response({"status":"Valid"},status=status.HTTP_200_OK)
     return Response({"status":"InValid"},status= status.HTTP_200_OK)
     
+    
+from shift.utilities import active_shift    
+@api_view(["GET"])
+def open_out(request): 
+    
+    shift = active_shift(request)
+    shift.machine.open_out = True
+    shift.machine.save()
+    
+    return Response({"status":"Valid"},status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def open_in(request): 
+    
+    shift = active_shift(request)
+    shift.machine.open_in = True
+    shift.machine.save()
+    
+    return Response({"status":"Valid"},status=status.HTTP_200_OK)

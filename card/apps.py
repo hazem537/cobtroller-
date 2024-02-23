@@ -20,4 +20,4 @@ class CardConfig(AppConfig):
         import card.signals.parking_session 
          
         card_ready.send(sender = self.__class__)       
-        print("card_ready")
+     

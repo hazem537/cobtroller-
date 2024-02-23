@@ -6,8 +6,11 @@ from card.serializers.parkingSession import  CarEnterSerializer, ParkingSessions
 from rest_framework import status
 from card.models import Category, ParkingCard ,ParkingSession
 from gates.models import Gate
+from rest_framework import generics
 import logging 
+import c3
 logger =logging.getLogger(__name__)
+
 @api_view(["POST"])
 def car_in(request):
     try:
@@ -85,11 +88,13 @@ def car_out(request):
             s_session.done=True
             s_session.shift_out=shift
             s_session.save()
-            
+          
             session_serializer= ParkingSessionserializer(instance = s_session)
+            s_session.gate_out.open_out=True
+            s_session.gate_out.save()
             # make cam take image and save
-            from shift.processing import open_out_door
-            open_out_door(s_session.gate_out.ip)
+            # from shift.processing import open_out_door
+            # open_out_door(s_session.gate_out.ip)
             
             return Response({"session":session_serializer.data},status=status.HTTP_200_OK)
     except ParkingSession.DoesNotExist:
@@ -115,6 +120,29 @@ def card_lost(request):
         lost_card_session.done=True
         lost_card_session.shift_out=shift
         lost_card_session.shift_in=shift
-        lost_card_session.save()
+        lost_card_session.save() 
         session_serializer = ParkingSessionserializer(instance=lost_card_session)
+        lost_card_session.gate_out.open_out=True
+        lost_card_session.gate_out.save()
+        print(lost_card_session.gate_out.open_out)
         return Response({"session":session_serializer.data},status=status.HTTP_200_OK)
+
+# get all session with payment _number 
+# @api_view(["GET"])
+# def get_parking_session(request,session_id):
+#     """ get session id from url  """
+#     try:
+#         obj = ParkingSession.objects.get(pk =session_id)
+#         serializer = ParkingSessionserializer(instance =obj)
+#         return Response({"session":serializer.data},status=status.HTTP_200_OK)    
+#     except ParkingSession.DoesNotExist :
+#         return Response({"message":"this session not found"},status=status.HTTP_404_NOT_FOUND)
+    
+
+
+class SessionDetail (generics.RetrieveUpdateDestroyAPIView):
+    serializer_class =ParkingSessionserializer
+    queryset =ParkingSession.objects.all()
+    permission_classes =[IsAuthenticated]
+    
+    

@@ -106,6 +106,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 # AUTH_USER_MODEL = 'api.CustomUser'
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_RENDERER_CLASSES": [
@@ -143,7 +144,12 @@ DATABASES = {
 #     }
 # }
 
-
+CACHES={
+    "default":{
+        "BACKEND":"django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION":f"{BASE_DIR}/cache"
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -206,27 +212,4 @@ MEDIA_URL = "/media/"
 
 PLACE_NAME = "مستشفي الطيران التخصصي"
 
-
-import signal
-import sys
-from django.utils import autoreload
-
-# def handle_reload_signal(sender, **kwargs):
-#     # Perform actions when reload signal is received
-#     print("Reloading Django application...")
-#     cleanup_on_exit(None,None)
-    
-# autoreload.autoreload_started.connect(handle_reload_signal)
-
-def cleanup_on_exit(signum, frame):
-    from shift.processing import PM
-    # Perform cleanup tasks here, such as terminating processes
-    PM.terminate_all_processes()
-    # Optionally, log a message indicating the reason for termination
-    print("Application terminated due to signal:", signum)
-    sys.exit(0)
-
-# Register signal handlers
-signal.signal(signal.SIGTERM, cleanup_on_exit)
-signal.signal(signal.SIGINT, cleanup_on_exit)
 

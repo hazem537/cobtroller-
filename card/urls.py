@@ -4,7 +4,6 @@ from django.urls import path
 from card.api import parkingCard 
 from card.api import parkingSession
 from card.api import category
-
 urlpatterns = [ 
     path("card/",parkingCard.ParkingCardList.as_view()),
     path("card/<int:pk>",parkingCard.ParkingCardDetail.as_view()),  
@@ -19,5 +18,10 @@ urlpatterns = [
     path('category/',category.CategotyList.as_view()),
     path('category/<int:pk>',category.CategotyDetail.as_view()),
     
-    path('category-short-term/',category.ShortTermCat.as_view())    
+    path('category-short-term/',category.ShortTermCat.as_view()) ,
+    
+    path("parking_session/<int:pk>",parkingSession.SessionDetail.as_view()), 
+    
+
+
 ]

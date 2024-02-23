@@ -8,7 +8,7 @@ class ShiftConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'shift'
     def ready(self):
-        print("shift ready")
+ 
         return
                
 # @receiver(card_ready)
